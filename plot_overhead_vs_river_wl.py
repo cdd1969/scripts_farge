@@ -11,12 +11,7 @@
 import os
 import sys
 import inspect
-
-try:
-    import seaborn as sns
-    _sns = True
-except:
-    _sns = False
+import seaborn as sns
 
 
 # use this if you want to include modules from a subfolder
@@ -73,18 +68,19 @@ if __name__ == '__main__':
     path = os.path.dirname(sys.argv[0])
     fname = os.path.abspath(os.path.join(path, file_folder, file_name) )
     
+
+    wellnames = ['GWM1', 'GWM2', 'GWM3', 'GWM4', 'GWM5', 'GWM6']
+
     mode = 'XLS'
     if mode == 'XLS':
         # load data into pandas.dataframe
         data = process2pandas.read_xlx_into_pandas(fname, sheetname=0)
 
-        for Y_name1, Y_name2 in zip(overhead_names1, overhead_names2):
-            if _sns:
-                with sns.axes_style("whitegrid"):
-                    plot_pandas.plot_pandas_scatter_special1(data, x=[X_name1, X_name2], y=[Y_name1, Y_name2], saveName=None, HYDR_VALS=HYDR_VALS,
-                        xlabel='River water level [m AMSL]', title='OVERHEAD IN OBSERVATION WELL VS RIVER WATERLEVEL', ylabel='Overhead [m]',
-                        trendlinemode=3, xlim=[-4., 3.5])
-            else:
-                    plot_pandas.plot_pandas_scatter_special1(data, x=[X_name1, X_name2], y=[Y_name1, Y_name2], saveName=None, HYDR_VALS=HYDR_VALS,
-                        xlabel='River water level [m AMSL]', title='OVERHEAD IN OBSERVATION WELL VS RIVER WATERLEVEL', ylabel='Overhead [m]',
-                        trendlinemode=3, xlim=[-4., 3.5])
+        for Y_name1, Y_name2, wellname in zip(overhead_names1, overhead_names2, wellnames):
+            fign = os.path.join(path, 'out', 'overhead_'+wellname+'.pdf')
+            with sns.axes_style("whitegrid"):
+                plot_pandas.plot_pandas_scatter_special1(data, x=[X_name1, X_name2], y=[Y_name1, Y_name2], saveName=fign, HYDR_VALS=HYDR_VALS,
+                        xlabel='River waterlevel [m AMSL]', title='Overhead in observation well '+wellname+' VS River waterlevel', ylabel='Overhead [m]',
+                        trendlinemode=3, xlim=[-4., 5.5], ylim=[-4, 4.],
+                        legendlabels=['high water', 'low water'],
+                        axeslabel_fontsize=18., title_fontsize=20., axesvalues_fontsize=18., annotation_fontsize=18., legend_fontsize=18.)

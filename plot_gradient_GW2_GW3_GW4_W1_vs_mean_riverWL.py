@@ -1,11 +1,7 @@
 import os
 import sys
 
-try:
-    import seaborn as sns
-    _sns = True
-except:
-    _sns = False
+import seaborn as sns
 
 # use this if you want to include modules from a subfolder
 import inspect
@@ -52,9 +48,11 @@ def plot(df, df_names, legendlabels=[None], saveName=None):
     
     plot_pandas.plot_pandas_scatter(df, x=['W_1_averaging3', 'W_1_averaging3', 'W_1_averaging3'],
                 y=['gradient_W_GW2', 'gradient_GW2_GW3', 'gradient_GW3_GW4'], saveName=saveName,
-                xlabel='Mean river water level [m AMSL]', title='Mean Hydraulic Gradient VS. Mean River Water-Level',
+                xlabel='Mean river waterlevel [m AMSL]', title='Mean Hydraulic Gradient VS. Mean River Waterlevel',
                 ylabel='Mean hydraulic gradient [-]', legendlabels=legendlabels,
-                trendlinemode=1, ylim=[-0.015, 0.015], xlim=[-0.5, 2.5])
+                trendlinemode=1, ylim=[-0.015, 0.015], xlim=[-0.5, 2.5],
+                df_scatter_kwargs={'marker': "o", 'markersize': 2., 'style': '.', 'markeredgecolor': 'black', 'markeredgewidth': 0.0, 'legend': False},
+                axeslabel_fontsize=18., title_fontsize=20., axesvalues_fontsize=18., annotation_fontsize=18., legend_fontsize=18.)
 
 
 
@@ -84,8 +82,6 @@ if __name__ == '__main__':
     data = process2pandas.read_mean_hydrographs_into_pandas(fname, datetime_indexes=True, decimal=',', na_values=['---'])
 
     # plotting...
-    if _sns:
-        with sns.axes_style("whitegrid"):
-            plot(data, col_names, saveName=None)
-    else:
+    with sns.axes_style("whitegrid"):
         plot(data, col_names, saveName=None)
+

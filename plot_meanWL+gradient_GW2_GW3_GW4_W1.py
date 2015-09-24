@@ -8,11 +8,8 @@ import os
 import sys
 
 import matplotlib.pyplot as plt
-try:
-    import seaborn as sns
-    _sns = True
-except:
-    _sns = False
+import seaborn as sns
+
 
 
 # use this if you want to include modules from a subfolder
@@ -26,21 +23,28 @@ import process2pandas
 import plot_pandas
 
 
-def plot(df, df_names, legend_names, saveName=None):
+def plot(df, df_names, legend_names, saveName=None,
+         axeslabel_fontsize=10., title_fontsize=20., axesvalues_fontsize=10., annotation_fontsize=10., legend_fontsize=8.):
     """
         df   - PandasDataFrame timeseries for original hydrographs
         names - list with column names
         legend_names - list with strings
     """
     print "plotting timeseries data..."
-    fig = plt.figure(tight_layout=False, figsize=(11.69, 8.27))
+    fig = plt.figure(tight_layout=True, figsize=(40, 10))
     
     # ---------------------------
     # SUBPLOT 1
     # ---------------------------
     ax1 = fig.add_subplot(211)
     plot_pandas.plot_mean_waterlevel(df, df_names, legend_names, saveName=saveName, ax=ax1)
-    
+    ax1.tick_params(axis='both', labelsize=axesvalues_fontsize)
+    ax1.grid(True, which='major')
+    ax1.set_ylabel("Waterlevel [m AMSL]", fontsize=axeslabel_fontsize)
+    ax1.set_title('Averaged waterlevel after Serfes', fontsize=title_fontsize)
+
+    handles, labels = ax1.get_legend_handles_labels()
+    ax1.legend(handles, labels, fontsize=legend_fontsize)
     # ---------------------------
     # SUBPLOT 2
     # ---------------------------
@@ -59,21 +63,25 @@ def plot(df, df_names, legend_names, saveName=None):
     print 'calculating gradient....', df_names[1], '-', df_names[2]
     df['gradient_GW3_GW4'] = (df[df_names[1]] - df[df_names[2]])/distance_GW3_GW4
     
-    df['gradient_W_GW2'].plot(  ax=ax2, legend=True, title="Farge: Mean hydraulic gradients", lw=0.8)
-    df['gradient_GW2_GW3'].plot(ax=ax2, legend=True, title="Farge: Mean hydraulic gradients", lw=0.8)
-    df['gradient_GW3_GW4'].plot(ax=ax2, legend=True, title="Farge: Mean hydraulic gradients", lw=0.8)
+    df['gradient_W_GW2'].plot(  ax=ax2, legend=True, lw=0.8)
+    df['gradient_GW2_GW3'].plot(ax=ax2, legend=True, lw=0.8)
+    df['gradient_GW3_GW4'].plot(ax=ax2, legend=True, lw=0.8)
 
     handles, labels = ax2.get_legend_handles_labels()
     for i, l_name, dist in zip([0, 1, 2], labels, [distance_W_GW2, distance_GW2_GW3, distance_GW3_GW4]):
         labels[i] = l_name+': distance = {0} m'.format(dist)
-    ax2.legend(handles, labels)
+    
+    ax2.legend(handles, labels, fontsize=legend_fontsize,)
 
     ax2.grid(True, which='major')
-    ax2.set_ylabel("Mean hydraulic gradient [-]")
-    ax2.set_xlabel("Datetime")
+    ax2.set_title("Mean hydraulic gradients", fontsize=title_fontsize)
+    ax2.set_ylabel("Mean hydraulic gradient [-]", fontsize=axeslabel_fontsize)
+    ax2.set_xlabel("Datetime", fontsize=axeslabel_fontsize)
+    ax2.tick_params(axis='both', labelsize=axesvalues_fontsize)
+    
     ax2.set_ylim([-0.015, 0.015])
-    figManager = plt.get_current_fig_manager()
-    figManager.window.showMaximized()
+    #figManager = plt.get_current_fig_manager()
+    #figManager.window.showMaximized()
 
 
     if saveName:
@@ -101,8 +109,7 @@ if __name__ == '__main__':
 
     data = process2pandas.read_mean_hydrographs_into_pandas(fname, datetime_indexes=True, decimal=',', na_values=['---'])
 
-    if _sns:
-        with sns.axes_style("whitegrid"):
-            plot(data, col_names, legend_names , saveName=None)
-    else:
-        plot(data, col_names, legend_names , saveName=None)
+    with sns.axes_style("whitegrid"):
+        plot(data, col_names, legend_names , saveName=None,
+            axeslabel_fontsize=18., title_fontsize=20., axesvalues_fontsize=18., annotation_fontsize=18., legend_fontsize=18.)
+

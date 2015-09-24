@@ -25,7 +25,8 @@ def r_squared(actual, ideal):
 
 def plot_pandas_scatter(df, x=[0], y=[1], saveName=None, xlabel=None, ylabel=None, title=None, trendlinemode=None, legendlabels=[None], N_DEVIATIONS=10,
                         xlim=None, ylim=None, ax=None, legend_location=0, draw_axes=False,
-                        df_scatter_kwargs={'marker': "o", 'markersize': 6., 'style': '.', 'markeredgecolor': 'black', 'markeredgewidth': 0.2, 'legend': False}):
+                        df_scatter_kwargs={'marker': "o", 'markersize': 6., 'style': '.', 'markeredgecolor': 'black', 'markeredgewidth': 0.2, 'legend': False},
+                        axeslabel_fontsize=10., title_fontsize=20., axesvalues_fontsize=10., annotation_fontsize=10., legend_fontsize=8.):
     """
         df              - pandas.DataFrame timeseries for original hydrographs
         x, y            - list with keys or indexes of X and Y data columns
@@ -61,11 +62,7 @@ def plot_pandas_scatter(df, x=[0], y=[1], saveName=None, xlabel=None, ylabel=Non
     for xi, yi in zip(x, y):
         df.plot(x=xi, y=yi, ax=ax, **df_scatter_kwargs)
 
-    ax.xaxis.grid(True, which='both')
-    ax.yaxis.grid(True, which='both')
-    ax.set_xlabel(xlabel)
-    ax.set_ylabel(ylabel)
-    ax.set_title(title)
+
     # set some plot margins...
     minx, maxx = min([df[X].min() for X in x]), max([df[X].max() for X in x])
     miny, maxy = min([df[Y].min() for Y in y]), max([df[Y].max() for Y in y])
@@ -115,7 +112,7 @@ def plot_pandas_scatter(df, x=[0], y=[1], saveName=None, xlabel=None, ylabel=Non
             trendline_equation = 'y=%.3fx+(%.3f)' % (z[0], z[1])
             
             if trendlinemode == 1:
-                ax.plot([minx, maxx], p([minx, maxx]), '--', lw=0.8, color=c, label='Trendline\n{0}\nr^2={1:.3f}'.format(trendline_equation, r_sq))
+                ax.plot([minx, maxx], p([minx, maxx]), '-', lw=4., color=c, label='Trendline\n{0}\nr^2={1:.3f}'.format(trendline_equation, r_sq))
             
             else:  # if <trendlinemode> is 2 or 3
 
@@ -153,7 +150,8 @@ def plot_pandas_scatter(df, x=[0], y=[1], saveName=None, xlabel=None, ylabel=Non
                     p1 = np.poly1d(z1)
                     
                     trendline_equation1 = 'y=%.3fx+(%.3f)' % (z1[0], z1[1])
-                    ax.plot([minx, maxx], p1([minx, maxx]), '-', lw=0.8, color=c, label='trendline of {1} maximum \ndeviations above mean trendline\n{0}'.format(trendline_equation1, N_DEVIATIONS))
+                    #ax.plot([minx, maxx], p1([minx, maxx]), '-', lw=0.8, color=c, label='trendline of {1} maximum \ndeviations above mean trendline\n{0}'.format(trendline_equation1, N_DEVIATIONS))
+                    ax.plot([minx, maxx], p1([minx, maxx]), '-', lw=0.8, color=c)
 
                 elif trendlinemode == 3:  # shifted trendlines
                     # now find one maximum deviation...
@@ -179,7 +177,8 @@ def plot_pandas_scatter(df, x=[0], y=[1], saveName=None, xlabel=None, ylabel=Non
                     p1 = np.poly1d(z1)  # shifted trendline
                     trendline_equation = 'y=%.3fx+(%.3f)' % (z1[0], z1[1])
 
-                    ax.plot([minx, maxx], p1([minx, maxx]), '-', lw=0.8, color=c, label='Shifted trendline\n{0}'.format(trendline_equation))
+                    #ax.plot([minx, maxx], p1([minx, maxx]), '-', lw=0.8, color=c, label='Shifted trendline\n{0}'.format(trendline_equation))
+                    ax.plot([minx, maxx], p1([minx, maxx]), '-', lw=0.8, color=c)
 
     if not _ax: figManager = plt.get_current_fig_manager()
     if not _ax: figManager.window.showMaximized()
@@ -198,8 +197,19 @@ def plot_pandas_scatter(df, x=[0], y=[1], saveName=None, xlabel=None, ylabel=Non
     for i in xrange(len(labels)/divisor):
         labels[i] = legendlabels[i] if legendlabels[0] else y[i]
 
-    ax.legend(handles, labels, loc=legend_location)
-    
+
+
+
+
+    ax.legend(handles, labels, fontsize=legend_fontsize, loc=legend_location)
+    ax.xaxis.grid(True, which='both')
+    ax.yaxis.grid(True, which='both')
+    ax.set_xlabel(xlabel, fontsize=axeslabel_fontsize)
+    ax.set_ylabel(ylabel, fontsize=axeslabel_fontsize)
+    ax.set_title(title, fontsize=title_fontsize)
+    ax.tick_params(axis='both', labelsize=axesvalues_fontsize)
+
+
     if saveName and not _ax:
         fig.savefig(saveName, dpi=300, tight_layout=True)#, format='pdf')
         print 'saving figure... :', saveName
@@ -227,7 +237,8 @@ def plot_pandas_scatter(df, x=[0], y=[1], saveName=None, xlabel=None, ylabel=Non
 
 
 def plot_pandas_scatter_special1(df, x=[0], y=[1], saveName=None, xlabel=None, ylabel=None, title=None, trendlinemode=None, legendlabels=[None],
-                                N_DEVIATIONS=10, xlim=None, ylim=None, HYDR_VALS=None):
+                                N_DEVIATIONS=10, xlim=None, ylim=None, HYDR_VALS=None,
+                                axeslabel_fontsize=10., title_fontsize=20., axesvalues_fontsize=10., annotation_fontsize=10., legend_fontsize=8.):
     """
         df              - pandas.DataFrame timeseries for original hydrographs
         x, y            - list with keys or indexes of X and Y data columns
@@ -252,7 +263,8 @@ def plot_pandas_scatter_special1(df, x=[0], y=[1], saveName=None, xlabel=None, y
         raise ValueError('Number of keys for X and Y dimension should be equal. Got: {0} for X and {1} for y'.format(len(x), len(y)))
     
     print "plotting scatter data..."
-    fig = plt.figure(figsize=(11.69, 8.27))
+    #fig = plt.figure(figsize=(11.69, 8.27))
+    fig = plt.figure(figsize=(6, 4), tight_layout=True)
     
     ax = fig.add_subplot(111)
     for xi, yi in zip(x, y):
@@ -274,14 +286,6 @@ def plot_pandas_scatter_special1(df, x=[0], y=[1], saveName=None, xlabel=None, y
         miny, maxy = None, None
 
 
-
-    ax.xaxis.grid(True, which='both')
-    ax.yaxis.grid(True, which='both')
-    ax.set_xlabel(xlabel)
-    ax.set_ylabel(ylabel)
-    ax.set_title(title)
-    #ax.set_xlabel(x)
-    #ax.set_ylabel(y)
     if minx is None:
         minx = min([df[X].min() for X in x])
     if maxx is None:
@@ -291,8 +295,10 @@ def plot_pandas_scatter_special1(df, x=[0], y=[1], saveName=None, xlabel=None, y
     if maxy is None:
         maxy = max([df[Y].max() for Y in y])
     x_5proc, y_5proc = abs(minx - maxx)*0.1, abs(miny - maxy)*0.1  # additinal 10% margins to make plot nicer
-    ax.set_ylim([miny - y_5proc, maxy + y_5proc])
-    ax.set_xlim([minx - x_5proc, maxx + x_5proc])
+    #ax.set_ylim([miny - y_5proc, maxy + y_5proc])
+    #ax.set_xlim([minx - x_5proc, maxx + x_5proc])
+    ax.set_ylim([miny, maxy])
+    ax.set_xlim([minx, maxx])
 
 
     if trendlinemode in [1, 2]:
@@ -431,43 +437,48 @@ def plot_pandas_scatter_special1(df, x=[0], y=[1], saveName=None, xlabel=None, y
                     if plot_data_values:
                         # NNTnw
                         NNTnw_overhead = z1[0]*NNTnw + z1[1]
-                        ax.plot([NNTnw, NNTnw], [miny, NNTnw_overhead], '--', color='k')
-                        ax.annotate('NNTnw\n{0:.2f}\nmAMSL'.format(NNTnw), xy=(NNTnw, miny), xytext=(0, -5), textcoords='offset points', va='top', ha='center', size=10)
-                        ax.annotate('{0:.2f}'.format(NNTnw_overhead), xy=(NNTnw, NNTnw_overhead), xytext=(10, 50),
-                            textcoords='offset points', va='bottom', arrowprops=dict(arrowstyle='->', connectionstyle='arc3,rad=0.5', color='k'))
+                        ax.plot([NNTnw, NNTnw], [miny, NNTnw_overhead], '--', color='gray')
+                        ax.annotate('LLW = {0:.2f} [mAMSL]'.format(NNTnw), xy=(NNTnw, miny), xytext=(-7, 10), textcoords='offset points', va='bottom', ha='center',
+                                    size=annotation_fontsize, rotation=90.)
+                        ax.annotate('{0:.2f} m'.format(NNTnw_overhead), xy=(NNTnw, NNTnw_overhead), xytext=(10, 50),
+                                    textcoords='offset points', va='bottom', arrowprops=dict(arrowstyle='->', connectionstyle='arc3,rad=0.5', color='k'), size=annotation_fontsize)
                         
                         # MspTnw
                         MspTnw_overhead = z1[0]*MspTnw + z1[1]
-                        ax.plot([MspTnw, MspTnw], [miny, MspTnw_overhead], '--', color='k')
-                        ax.annotate('MspTnw\n{0:.2f}\nmAMSL'.format(MspTnw), xy=(MspTnw, miny), xytext=(-5, -5), textcoords='offset points', va='top', ha='center', size=10)
-                        ax.annotate('{0:.2f}'.format(MspTnw_overhead), xy=(MspTnw, MspTnw_overhead), xytext=(10, 50),
-                            textcoords='offset points', va='bottom', arrowprops=dict(arrowstyle='->', connectionstyle='arc3,rad=0.5', color='k'))
+                        ax.plot([MspTnw, MspTnw], [miny, MspTnw_overhead], '--', color='gray')
+                        ax.annotate('MLWS = {0:.2f} [mAMSL]'.format(MspTnw), xy=(MspTnw, miny), xytext=(-7, 10), textcoords='offset points', va='bottom', ha='center',
+                                    size=annotation_fontsize, rotation=90.)
+                        ax.annotate('{0:.2f} m'.format(MspTnw_overhead), xy=(MspTnw, MspTnw_overhead), xytext=(10, 60),
+                                    textcoords='offset points', va='bottom', arrowprops=dict(arrowstyle='->', connectionstyle='arc3,rad=0.5', color='k'), size=annotation_fontsize)
 
                         # MTnw
                         MTnw_overhead = z1[0]*MTnw + z1[1]
-                        ax.plot([MTnw, MTnw], [miny, MTnw_overhead], '--', color='k')
-                        ax.annotate('MTnw\n{0:.2f}\nmAMSL'.format(MTnw), xy=(MTnw, miny), xytext=(5, -5), textcoords='offset points', va='top', ha='center', size=10)
-                        ax.annotate('{0:.2f}'.format(MTnw_overhead), xy=(MTnw, MTnw_overhead), xytext=(10, 50),
-                            textcoords='offset points', va='bottom', arrowprops=dict(arrowstyle='->', connectionstyle='arc3,rad=0.5', color='k'))
-
+                        ax.plot([MTnw, MTnw], [miny, MTnw_overhead], '--', color='gray')
+                        ax.annotate('MLW = {0:.2f} [mAMSL]'.format(MTnw), xy=(MTnw, miny), xytext=(10, 10), textcoords='offset points', va='bottom', ha='center',
+                                    size=annotation_fontsize, rotation=90.)
+                        ax.annotate('{0:.2f} m'.format(MTnw_overhead), xy=(MTnw, MTnw_overhead), xytext=(10, 50),
+                                    textcoords='offset points', va='bottom', arrowprops=dict(arrowstyle='->', connectionstyle='arc3,rad=0.5', color='k'), size=annotation_fontsize)
+                
                 elif i == 1 :
                     ax.plot([1., maxx], p1([1., maxx]), '--', lw=0.8, color=c, label='Shifted Trendline\n{0}'.format(trendline_equation))
+
+                    """
                     if plot_data_values:
 
                         # MThw
                         MThw_overhead = z1[0]*MThw + z1[1]
                         ax.plot([MThw, MThw], [miny, MThw_overhead], '--', color='k')
                         ax.annotate('MThw\n{0:.2f}\nmAMSL'.format(MThw), xy=(MThw, miny), xytext=(0, -5), textcoords='offset points', va='top', ha='center', size=10)
-                        ax.annotate('{0:.2f}'.format(MThw_overhead), xy=(MThw, MThw_overhead), xytext=(10, 50),
-                            textcoords='offset points', va='bottom', arrowprops=dict(arrowstyle='->', connectionstyle='arc3,rad=0.5', color='k'))
+                        ax.annotate('{0:.2f} m'.format(MThw_overhead), xy=(MThw, MThw_overhead), xytext=(10, 50),
+                            textcoords='offset points', va='bottom', arrowprops=dict(arrowstyle='->', connectionstyle='arc3,rad=0.5', color='k'), size=annotation_fontsize)
 
                         # HThw
                         HThw_overhead = z1[0]*HThw + z1[1]
                         ax.plot([HThw, HThw], [miny, HThw_overhead], '--', color='k')
                         ax.annotate('HThw\n{0:.2f}\nmAMSL'.format(HThw), xy=(HThw, miny), xytext=(0, -5), textcoords='offset points', va='top', ha='center', size=10)
-                        ax.annotate('{0:.2f}'.format(HThw_overhead), xy=(HThw, HThw_overhead), xytext=(10, 50),
-                            textcoords='offset points', va='bottom', arrowprops=dict(arrowstyle='->', connectionstyle='arc3,rad=0.5', color='k'))
-
+                        ax.annotate('{0:.2f} m'.format(HThw_overhead), xy=(HThw, HThw_overhead), xytext=(10, 50),
+                            textcoords='offset points', va='bottom', arrowprops=dict(arrowstyle='->', connectionstyle='arc3,rad=0.5', color='k'), size=annotation_fontsize)
+                    """
 
 
     figManager = plt.get_current_fig_manager()
@@ -487,12 +498,36 @@ def plot_pandas_scatter_special1(df, x=[0], y=[1], saveName=None, xlabel=None, y
     for i in xrange(len(labels)/divisor):
         labels[i] = legendlabels[i] if legendlabels[0] else y[i]
 
-    ax.legend(handles, labels)
+    ax.legend(handles, labels, fontsize=legend_fontsize)
+
+    ax.xaxis.grid(True, which='both')
+    ax.yaxis.grid(True, which='both')
+    ax.set_xlabel(xlabel, fontsize=axeslabel_fontsize)
+    ax.set_ylabel(ylabel, fontsize=axeslabel_fontsize)
+    ax.set_title(title, fontsize=title_fontsize)
+    ax.tick_params(axis='both', labelsize=axesvalues_fontsize)
     
     if saveName:
         fig.savefig(saveName, dpi=300, tight_layout=True, format='pdf')
         print 'saving figure... :', saveName
     plt.show()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -519,7 +554,7 @@ def plot_mean_waterlevel(df, df_names, legend_names, saveName=None, ax=None):
             labels[i] = l_name
         ax.legend(handles, labels)
 
-        ax.grid(True, which='both')
+        ax.grid(True, which='major')
         ax.set_ylabel("m AMSL")
         ax.set_xlabel("Datetime")
         figManager = plt.get_current_fig_manager()
@@ -538,7 +573,7 @@ def plot_mean_waterlevel(df, df_names, legend_names, saveName=None, ax=None):
             labels[i] = l_name
         ax.legend(handles, labels)
 
-        ax.grid(True, which='both')
+        ax.grid(True, which='major')
         ax.set_ylabel("m AMSL")
         ax.set_xlabel("Datetime")
 

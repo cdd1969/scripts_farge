@@ -66,7 +66,8 @@ if __name__ == '__main__':
                     trendlinemode=1, legendlabels=legendlabel,
                     xlim=[borders[0], borders[1]], ylim=[borders[2], borders[3]],
                     legend_location=l_loc, ax=ax, draw_axes=True,
-                    df_scatter_kwargs={'marker': "o", 'markersize': 4., 'style': '.', 'markeredgecolor': 'black', 'markeredgewidth': 0.2, 'legend': False})
+                    df_scatter_kwargs={'marker': "o", 'markersize': 6., 'style': '.', 'markeredgecolor': 'black', 'markeredgewidth': 0.2, 'legend': False},
+                    axeslabel_fontsize=18., title_fontsize=20., axesvalues_fontsize=18., annotation_fontsize=18., legend_fontsize=18.)
 
         for ax, x, y, legendlabel, borders, ylabel, l_loc in zip(
             [ax2,                                   ax5],
@@ -82,7 +83,8 @@ if __name__ == '__main__':
                     trendlinemode=1, legendlabels=legendlabel,
                     xlim=[borders[0], borders[1]], ylim=[borders[2], borders[3]],
                     legend_location=l_loc, ax=ax, draw_axes=True,
-                    df_scatter_kwargs={'marker': "o", 'markersize': 4., 'style': '.', 'markeredgecolor': 'black', 'markeredgewidth': 0.2, 'legend': False})
+                    df_scatter_kwargs={'marker': "o", 'markersize': 6., 'style': '.', 'markeredgecolor': 'black', 'markeredgewidth': 0.2, 'legend': False},
+                    axeslabel_fontsize=18., title_fontsize=20., axesvalues_fontsize=18., annotation_fontsize=18., legend_fontsize=18.)
         
         for ax, x, y, legendlabel, borders, ylabel, l_loc in zip(
             [ax3,                                   ax6],
@@ -98,7 +100,8 @@ if __name__ == '__main__':
                     trendlinemode=1, legendlabels=legendlabel,
                     xlim=[borders[0], borders[1]], ylim=[borders[2], borders[3]],
                     legend_location=l_loc, ax=ax, draw_axes=True,
-                    df_scatter_kwargs={'marker': "o", 'markersize': 4., 'style': '.', 'markeredgecolor': 'black', 'markeredgewidth': 0.2, 'legend': False})
+                    df_scatter_kwargs={'marker': "o", 'markersize': 6., 'style': '.', 'markeredgecolor': 'black', 'markeredgewidth': 0.2, 'legend': False},
+                    axeslabel_fontsize=18., title_fontsize=20., axesvalues_fontsize=18., annotation_fontsize=18., legend_fontsize=18.)
         
 
         plt.setp(((ax1, ax2, ax3), (ax4, ax5, ax6)), xticks=[-100, -50, 0, 50, 100], xticklabels=[-100, -50, 0, 50, 100])
@@ -113,5 +116,5 @@ if __name__ == '__main__':
 
         #figManager = plt.get_current_fig_manager()
         #figManager.window.showMaximized()
-        #plt.tight_layout()
+        plt.tight_layout()
         plt.show()
