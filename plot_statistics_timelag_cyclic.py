@@ -56,6 +56,7 @@ if __name__ == '__main__':
             plot_pandas.plot_statistical_analysis(data[well], data2=None, save=False, figurename=fign,  plot_title='Timelag calculated for each out of 344 tidal cycles: {0}'.format(well),
                     ylims=None,
                     ylabel1="Timelag [min]",                              xlabel1="Tidal cycles",
-                    ylabel2="Data probability distribution (normalized)", xlabel2="Timelag [min]",
-                    ylabel3="Cummulative distribution (normalized)",      xlabel3="Timelag [min]",
-                    papersize='A4')
+                    ylabel2="Normal PDF", xlabel2="Timelag [min]",
+                    ylabel3="Normal CDF",      xlabel3="Timelag [min]",
+                    papersize='A4',
+                    axeslabel_fontsize=18., title_fontsize=20., axesvalues_fontsize=18., annotation_fontsize=18., legend_fontsize=18.)
