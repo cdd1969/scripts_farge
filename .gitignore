@@ -1,3 +1,4 @@
 out/
 thomas_presentation_wsa_bremen/
 *.pyc
+lib/*.pyc
