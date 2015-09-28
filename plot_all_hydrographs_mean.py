@@ -2,11 +2,8 @@ import os
 import sys
 
 import matplotlib.pyplot as plt
-try:
-    import seaborn as sns
-    _sns = True
-except:
-    _sns = False
+import seaborn as sns
+
 
 # use this if you want to include modules from a subfolder
 import inspect
@@ -26,7 +23,8 @@ Data handling is performed with PANDAS
 """
 
 
-def plot(df, name1, name2, saveName=None, ylim=None):
+def plot(df, name1, name2, saveName=None, ylim=None,
+        axeslabel_fontsize=10., title_fontsize=20., axesvalues_fontsize=10., annotation_fontsize=10., legend_fontsize=8.):
     """
 
         df       - pandas.DataFrame timeseries for original hydrographs
@@ -36,7 +34,7 @@ def plot(df, name1, name2, saveName=None, ylim=None):
         ylim     - None, or list for y-limits [ymin, ymax] of the plot. (i.e. ylim=[0., 1.])
     """
     print "plotting timeseries data..."
-    fig = plt.figure(tight_layout=False, figsize=(11.69, 8.27))
+    fig = plt.figure(tight_layout=True, figsize=(8.27, 5.83))
     ax = fig.add_subplot(111)
     
     df[name1].plot(ax=ax, legend=True, title="Measured water level")
@@ -44,15 +42,20 @@ def plot(df, name1, name2, saveName=None, ylim=None):
 
     handles, labels = ax.get_legend_handles_labels()
     labels[1] = labels[0]+' averaged after Serfes(1991)'
-    ax.legend(handles, labels)
+    ax.legend(handles, labels, fontsize=legend_fontsize)
 
     ax.grid(True, which='major')
-    ax.set_ylabel("m AMSL")
-    ax.set_xlabel("Datetime")
+    ax.set_title("Measured water level and averaging after Serfes(1991)", fontsize=title_fontsize)
+    ax.set_ylabel("m AMSL", fontsize=axeslabel_fontsize)
+    ax.set_xlabel("", fontsize=axeslabel_fontsize)
+    ax.tick_params(axis='both', labelsize=axesvalues_fontsize)
     if ylim: ax.set_ylim(ylim)
+
+
     
-    figManager = plt.get_current_fig_manager()
-    figManager.window.showMaximized()
+
+    #figManager = plt.get_current_fig_manager()
+    #figManager.window.showMaximized()
 
     #py.iplot_mpl(fig, filename='test')
 
@@ -85,10 +88,9 @@ if __name__ == '__main__':
     # plotting
     for n1 in ['GW_1', 'GW_2', 'GW_3', 'GW_4', 'GW_5', 'GW_6', 'W_1']:
         figname = os.path.abspath(os.path.join(path, figure_path, 'hydrograph_+mean_'+n1+'.pdf'))
-        #figname=None
-        if _sns:
-            with sns.axes_style("whitegrid"):
-                plot(data, n1, n1+'_averaging3', saveName=figname, ylim=[-3., 5.])
-        else:
-            plot(data, n1, n1+'_averaging3', saveName=figname, ylim=[-3., 5.])
+        #figname = None
+        with sns.axes_style("whitegrid"):
+            plot(data, n1, n1+'_averaging3', saveName=figname, ylim=[-3., 5.],
+                axeslabel_fontsize=18., title_fontsize=20., axesvalues_fontsize=18., annotation_fontsize=18., legend_fontsize=18.)
+
 

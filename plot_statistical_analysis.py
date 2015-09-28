@@ -16,6 +16,7 @@ if cmd_subfolder not in sys.path:
     sys.path.insert(0, cmd_subfolder)
 
 import plot_pandas
+import process2pandas
 
 
 
@@ -74,9 +75,10 @@ def read_folder():
             with sns.axes_style("whitegrid"):
                 plot_pandas.plot_statistical_analysis(y, data2=y2, save=True, figurename=fig_name, plot_title=plt_title, ylims=[-2.5, 2.0],
                     ylabel1="m AMSL",                                     xlabel1="number of data points",
-                    ylabel2="Data probability distribution (normalized)", xlabel2="m AMSL",
-                    ylabel3="Cummulative distribution (normalized)",      xlabel3="m AMSL",
-                    papersize='A4')
+                    ylabel2="Normal PDF", xlabel2="m AMSL",
+                    ylabel3="Normal CDF",      xlabel3="m AMSL",
+                    papersize='A4',
+                    axeslabel_fontsize=18., title_fontsize=20., axesvalues_fontsize=18., annotation_fontsize=18., legend_fontsize=18.)
 
 
 
@@ -98,11 +100,13 @@ def read_file():
     y2 = read_waterlevel_values(fname, usecols=[7], skiprows=2, delimiter=';')
     for col, name in zip(usecols, colnames):
         print name, col
-        fig_name = os.path.abspath(os.path.join(path, file_folder, 'distribution_hydrograph_'+name+'__-2.5_5.0.pdf') )
+        fig_name = os.path.abspath(os.path.join(path, file_folder, 'distribution_hydrograph_'+name+'__-3._5.0.pdf') )
         
 
-        y = read_waterlevel_values(fname, usecols=[col], skiprows=2, delimiter=';')
-        print 'mean, std:', plot_pandas.calculate_mean_std(y)
+        #y = read_waterlevel_values(fname, usecols=[col], skiprows=2, delimiter=';')
+        y = process2pandas.read_hydrographs_into_pandas(fname, datetime_indexes=True, log=False, delimiter=';', usecols=[0, col], skiprows=1)
+        #print y
+        #print 'mean, std:', plot_pandas.calculate_mean_std(y)
         
         
 
@@ -117,11 +121,12 @@ def read_file():
 
         plt_title = '{0}: Measured waterlevel'.format(name)
         with sns.axes_style("whitegrid"):
-            plot_pandas.plot_statistical_analysis(y, data2=data_river, save=False, figurename=fig_name, plot_title=plt_title, ylims=[-2.5, 5.0],
+            plot_pandas.plot_statistical_analysis(y, data2=data_river, save=False, figurename=fig_name, plot_title=plt_title, ylims=[-3., 5.0],
                     ylabel1="m AMSL",                                     xlabel1="number of data points",
-                    ylabel2="Data probability distribution (normalized)", xlabel2="m AMSL",
-                    ylabel3="Cummulative distribution (normalized)",      xlabel3="m AMSL",
-                    papersize='A4')
+                    ylabel2="Normal PDF", xlabel2="m AMSL",
+                    ylabel3="Normal CDF",      xlabel3="m AMSL",
+                    papersize='A4',
+                    axeslabel_fontsize=18., title_fontsize=20., axesvalues_fontsize=18., annotation_fontsize=18., legend_fontsize=18.)
 
 
 if __name__ == '__main__':

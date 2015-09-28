@@ -23,7 +23,7 @@ def check_data_to_be_correct(filename, skip_header=3):
             continue
         ll = line.split(';')
         for j in xrange(1, len(ll)):
-            if ll[j] in ['\n', '']:
+            if ll[j] in ['\n', '', "\r\n"]:
                 continue
             try:
                 ll[j] = float(ll[j])
@@ -136,7 +136,8 @@ def check_extremums_dt(extremum_array, time_array, tau=12.42/24., prc=1./24., lo
 
 
 
-def plot_extremums(t, wl, low_tide_indexes, high_tide_indexes, time_errors_high=None, time_errors_low=None, date_xaxis=False, dt=None, plot_title=""):
+def plot_extremums(t, wl, low_tide_indexes, high_tide_indexes, time_errors_high=None, time_errors_low=None, date_xaxis=False, dt=None, plot_title="",
+                    axeslabel_fontsize=18., title_fontsize=20., axesvalues_fontsize=18., annotation_fontsize=18., legend_fontsize=18.):
     """
         t  - time array
         wl  - waterlevel original array
@@ -191,14 +192,17 @@ def plot_extremums(t, wl, low_tide_indexes, high_tide_indexes, time_errors_high=
         t1 = t[-1]+(t[-1]-t[0])*.1  # +10% of all range
         plt.xlim([t0, t1])
         plt.gca().xaxis_date()
-        myFmt = mdates.DateFormatter('%d.%m.%Y %H:%M')
+        myFmt = mdates.DateFormatter('%b %d')
         plt.gca().xaxis.set_major_formatter(myFmt)
-        #xticks(fontsize=20, rotation=45)
-        xticks( rotation=45)
 
-    plt.legend()
-    plt.title('{0}: Filtering LOW and HIGH tide value from signal'.format(plot_title))
-    plt.ylabel('m AMSL')
+
+        #xticks(fontsize=20, rotation=45)
+        xticks(fontsize=axesvalues_fontsize)
+        yticks(fontsize=axesvalues_fontsize)
+
+    plt.legend(fontsize=legend_fontsize)
+    plt.title('{0}: Filtering LOW and HIGH tide value from signal'.format(plot_title), fontsize=title_fontsize)
+    plt.ylabel('m AMSL', fontsize=axeslabel_fontsize)
 
 
     if dt:
@@ -207,7 +211,7 @@ def plot_extremums(t, wl, low_tide_indexes, high_tide_indexes, time_errors_high=
         handles, labels = gca().get_legend_handles_labels()
         handles.append(extra)
         labels.append('\nt(cycle)={0:.2f}+-{1:.2f} h'.format(dt[0]*24., dt[1]*24. ) )
-        gca().legend(handles, labels)
+        gca().legend(handles, labels, fontsize=legend_fontsize)
 
 
     plt.show()
@@ -216,7 +220,8 @@ def plot_extremums(t, wl, low_tide_indexes, high_tide_indexes, time_errors_high=
 
 
 
-def find_LowHighTide_Amplitudes(time_array, wl_array, tau=12.42/24., prc=1./24., order=1, plot=False, log=False, datetime_fmt='%d.%m.%Y %H:%M', plot_title=""):
+def find_LowHighTide_Amplitudes(time_array, wl_array, tau=12.42/24., prc=1./24., order=1, plot=False, log=False, datetime_fmt='%d.%m.%Y %H:%M', plot_title="",
+                                axeslabel_fontsize=18., title_fontsize=20., axesvalues_fontsize=18., annotation_fontsize=18., legend_fontsize=18.):
     """
         This script should be used with data which has no missing regions. Although it will work with all data, but
         may produce inaccuraces. Missing values should be represented by np.nan in wl_array.
@@ -250,13 +255,11 @@ def find_LowHighTide_Amplitudes(time_array, wl_array, tau=12.42/24., prc=1./24.,
     errors_low = check_extremums_dt(local_minimums, time_array, tau=tau, prc=prc , log=log)
     
     if plot:
-        if _sns:
-            with sns.axes_style("whitegrid"):
-                plot_extremums(time_array, wl_array, local_minimums, local_maximums, time_errors_high=errors_high, time_errors_low=errors_low,
-                        date_xaxis=True, dt=[tau, prc], plot_title=plot_title)
-        else:
+        with sns.axes_style("whitegrid"):
             plot_extremums(time_array, wl_array, local_minimums, local_maximums, time_errors_high=errors_high, time_errors_low=errors_low,
-                        date_xaxis=True, dt=[tau, prc], plot_title=plot_title)
+                        date_xaxis=True, dt=[tau, prc], plot_title=plot_title,
+                        axeslabel_fontsize=axeslabel_fontsize, title_fontsize=title_fontsize, axesvalues_fontsize=axesvalues_fontsize,
+                        annotation_fontsize=annotation_fontsize, legend_fontsize=legend_fontsize)
 
     #####################
     # now create list for return....
@@ -325,8 +328,11 @@ if __name__ == '__main__':
    
     for NAME, column in zip(names, gwl_column):
 
-        time, wl = load_timeseries_from_csv_file(filename, usecols=[time_column, column], skiprows=skiprows, delimiter=';',  datetime_fmt=datetime_fmt, fillvalue=fillvalue, return_mode=2)
-        LT, HT = find_LowHighTide_Amplitudes(time, wl, tau=12.42/24., prc=2/24., order=25, datetime_fmt=datetime_fmt, plot=True, plot_title=NAME, log=False)
+        time, wl = load_timeseries_from_csv_file(filename, usecols=[time_column, column],
+                    skiprows=skiprows, delimiter=';',  datetime_fmt=datetime_fmt, fillvalue=fillvalue, return_mode=2)
+        LT, HT = find_LowHighTide_Amplitudes(time, wl, tau=12.42/24., prc=2/24., order=25,
+                    datetime_fmt=datetime_fmt, plot=True, plot_title=NAME, log=False,
+                    axeslabel_fontsize=20., title_fontsize=22., axesvalues_fontsize=20., annotation_fontsize=20., legend_fontsize=20.)
 
         if savefiles:
             for fn, title , data in zip([low_tide_fname, high_tide_fname], ["Low Tide", "High Tide"], [LT, HT]):

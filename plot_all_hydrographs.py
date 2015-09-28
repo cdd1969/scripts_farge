@@ -2,12 +2,9 @@ import os
 import sys
 import inspect
 import matplotlib.pyplot as plt
+import datetime
+import seaborn as sns
 
-try:
-    import seaborn as sns
-    _sns = True
-except:
-    _sns = False
 
 # use this if you want to include modules from a subfolder
 cmd_subfolder = os.path.realpath(os.path.abspath(os.path.join(os.path.split(
@@ -27,7 +24,8 @@ Data handling is performed with PANDAS module
 """
 
 
-def plot(df, saveName=None, extrem=None):
+def plot(df, saveName=None, extrem=None,
+    axeslabel_fontsize=10., title_fontsize=20., axesvalues_fontsize=10., annotation_fontsize=10., legend_fontsize=8.):
     """
         df       - pandas.DataFrame timeseries for original hydrographs
         extrem   - list with pandas.Series with points of extremums
@@ -57,12 +55,18 @@ def plot(df, saveName=None, extrem=None):
             for item, marker in zip(a, ['o', 's']):  # a = list( hightide, lowtide)
                 item.plot(x='datetime', y='y', ax=ax, marker=marker, lw=2., style='.', markeredgecolor='black', markeredgewidth=0.4, color=c, legend=False)
 
+    #ax.set_xlim([datetime.date(2015, 1, 26), datetime.date(2015, 1, 30)])
+    handles, labels = ax.get_legend_handles_labels()
+    ax.legend(handles[0:7], labels[0:7], fontsize=legend_fontsize)
+    ax.grid(True, which='major')
+    ax.set_title("Measured water level in observation wells and river Weser", fontsize=title_fontsize)
+    ax.set_ylabel("m AMSL", fontsize=axeslabel_fontsize)
+    ax.set_xlabel("", fontsize=axeslabel_fontsize)
+    ax.tick_params(axis='both', which="both", labelsize=axesvalues_fontsize)
 
-    ax.grid(True, which='minor')
-    ax.set_ylabel("m AMSL")
-    ax.set_xlabel("Datetime")
-    figManager = plt.get_current_fig_manager()
-    figManager.window.showMaximized()
+
+    #figManager = plt.get_current_fig_manager()
+    #figManager.window.showMaximized()
 
     if saveName:
         fig.savefig(saveName, dpi=300, tight_layout=True, format='pdf')
@@ -105,8 +109,7 @@ if __name__ == '__main__':
     # ---------------------
     #AMPLITUDES = None
     #fign = None
-    if _sns:
-        with sns.axes_style("whitegrid"):
-            plot(data, saveName=fign, extrem=AMPLITUDES)
-    else:
-        plot(data, saveName=fign, extrem=AMPLITUDES)
+
+    with sns.axes_style("whitegrid"):
+        plot(data, saveName=fign, extrem=AMPLITUDES,
+            axeslabel_fontsize=18., title_fontsize=20., axesvalues_fontsize=18., annotation_fontsize=18., legend_fontsize=18.)
